@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 // REGISTER USER ======================
 const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const params = ({ name, email, password } = req.body);
 
   // validation
   if (!name) return res.status(400).send("Name is required");
@@ -17,7 +17,7 @@ const register = async (req, res) => {
   if (userExist) return res.status(400).send("Email is already taken");
 
   // save user
-  const user = new User(req.body);
+  const user = new User(params);
   try {
     await user.save();
     console.log("USER CREATED", user);
@@ -34,13 +34,11 @@ const login = async (req, res) => {
 
   // check if user exist
   let user = await User.findOne({ email }).exec();
-  console.log("USER EXIST: ", user);
   if (!user) res.status(400).send("User not found!");
 
   user.comparePassword(req.body.password, (err, match) => {
-    console.log("COMPARED ERROR", err);
     if (!match) {
-      return res.status(400).send("Wrong password!");
+      return res.status(400).send("Wrong password!", err);
     }
     let token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
