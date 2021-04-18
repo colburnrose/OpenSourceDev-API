@@ -3,18 +3,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
-// const helmet = require("helmet");
 const { readdirSync } = require("fs");
 const { NODE_ENV } = require("./config");
 const { PORT, DB_URL } = require("./config");
 
 const app = express();
-
-// DB: CONNECTION CONFIGURATION
-// const db = knex({
-//   client: "pg",
-//   connection: DB_URL,
-// });
 
 // DB: Connection
 // mongoose configuration
@@ -31,7 +24,6 @@ mongoose
 // route middleware
 const morganConfig = NODE_ENV === "production" ? "tiny" : "common";
 app.use(morgan(morganConfig));
-// app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
